@@ -257,7 +257,14 @@ btnEnviar.addEventListener("click", async ()=>{
   if ($("imagen").files[0]) fd.append("Imagen_Consulta", $("imagen").files[0]);
   try{
     const r = await fetch(WEBHOOK_URL, {method:"POST", body:fd});
-    if (!r.ok) throw new Error("HTTP "+r.status);
+    const texto = await r.text();
+    if (!r.ok) {
+      estado.className="estado err";
+      estado.textContent = texto || ("No se pudo procesar la consulta (código " + r.status + ").");
+      btnEnviar.disabled=false;
+      return;
+    }
+    $("exitoMsg").textContent = texto || "La historia clínica se cargó correctamente.";
     $("form").style.display="none"; $("exito").style.display="block";
   }catch(err){
     estado.className="estado err";
