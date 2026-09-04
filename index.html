@@ -129,9 +129,17 @@
       </label>
       <input type="file" id="imagen" accept="image/*" hidden>
       <div class="foto-nombre" id="fotoNombre"></div>
-    </div>
+      <label>Resumen de laboratorio en PDF (opcional)</label>
+<label class="foto-btn" for="pdf">
+  <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5z"/></svg>
+  Adjuntar PDF
+</label>
+<input type="file" id="pdf" accept="application/pdf" hidden>
+<div class="foto-nombre" id="pdfNombre"></div>
 
-    <button class="enviar" id="btnEnviar" disabled>Enviar </button>
+    </div>
+  
+    <button class="enviar" id="btnEnviar" disabled>Enviar </button>  
     <div class="estado" id="estado"></div>
   </div>
 
@@ -238,6 +246,10 @@ $("btnRehacer").addEventListener("click", ()=>{
 $("imagen").addEventListener("change", e=>{
   $("fotoNombre").textContent = e.target.files[0] ? e.target.files[0].name : "";
 });
+$("pdf").addEventListener("change", e=>{
+$("pdfNombre").textContent = e.target.files[0] ? e.target.files[0].name : "";
+});
+
 $("dni").addEventListener("input", validar);
 $("nombre").addEventListener("input", validar);
 
@@ -255,6 +267,7 @@ btnEnviar.addEventListener("click", async ()=>{
   fd.append("Nombre_Paciente", $("nombre").value.trim());
   fd.append("Audio_Consulta", blob, "consulta."+(blob._ext||"m4a"));
   if ($("imagen").files[0]) fd.append("Imagen_Consulta", $("imagen").files[0]);
+  if ($("pdf").files[0]) fd.append("PDF_Laboratorio", $("pdf").files[0]);
   try{
     const r = await fetch(WEBHOOK_URL, {method:"POST", body:fd});
     const texto = await r.text();
